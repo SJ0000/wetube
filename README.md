@@ -1,4 +1,4 @@
-Cloning Youtube with Varnilla and NodeJS
+Cloning Youtube with Vanilla and NodeJS
 
 Model : Data
 
