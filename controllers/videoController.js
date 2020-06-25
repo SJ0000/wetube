@@ -4,18 +4,26 @@ import { readSync } from "fs";
 //render 함수의 두번째 인자는 templete에 추가할 정보가 담긴 객체
 export const home = async (req, res) => {
   try {
-    const videos = await Video.find({}); // Mongodb에 저장된 모든 Video를 가져옴
+    const videos = await Video.find({}).sort({ _id: -1 }); // id기준 내림차순 정렬
     res.render("home", { pageTitle: "Home", videos });
   } catch (error) {
     console.log(error);
     res.render("home", { pageTitle: "Home", videos: [] });
   }
 };
-export const search = (req, res) => {
+export const search = async (req, res) => {
   // const searchingBy = req.query.term;
   const {
     query: { term: searchingBy },
   } = req;
+  let videos = [];
+  try {
+    videos = await Video.find({
+      title: { $regex: searchingBy, $options: "i" },
+    });
+  } catch (error) {
+    console.log(error);
+  }
   res.render("search", { pageTitle: "Search", searchingBy, videos });
 };
 
