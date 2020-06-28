@@ -16,7 +16,11 @@ const app = express();
 app.use(helmet());
 
 app.set("view engine", "pug");
+
+// /uploads 나 /static 에 접근하려고 하면 해당 폴더로 보내줌
 app.use("/uploads", express.static("uploads"));
+app.use("/static", express.static("static"));
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
