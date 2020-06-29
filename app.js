@@ -1,5 +1,7 @@
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import passport from "passport";
+import session from "express-session";
 import express from "express";
 import globalRouter from "./routers/globalRouter";
 import helmet from "helmet"; // node.js 보안
@@ -8,8 +10,13 @@ import morgan from "morgan"; // Logger
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import { localsMiddleware } from "./middlewares";
+import MongoStore from "connect-mongo"; // cookie를 mongodb에 저장
+import mongoose from "mongoose";
+import "./passport";
 
 const app = express();
+
+const CookieStore = MongoStore(session);
 
 // app.use(myMiddleware): 이 함수 이후에 추가되는 Route 들에 myMiddleware를 추가한다
 // !! 순서가 중요함
@@ -25,6 +32,17 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+
+app.use(
+  session({
+    secret: process.env.COOKIE_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    store: new CookieStore({ mongooseConnection: mongoose.connection }),
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(localsMiddleware); // View (.pug) 에서 Controller 의 변수를 사용할 수 있게 함
 
