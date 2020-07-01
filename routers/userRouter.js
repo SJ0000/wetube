@@ -5,6 +5,7 @@ import {
   userDetail,
   editProfile,
   changePassword,
+  me,
 } from "../controllers/userController";
 import { onlyPrivate } from "../middlewares";
 
