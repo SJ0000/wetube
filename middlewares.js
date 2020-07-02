@@ -3,12 +3,12 @@ import multer from "multer";
 import { EvalSourceMapDevToolPlugin } from "webpack";
 // View (.pug)에서 Controller의 변수를 사용할 수 있게 함
 const multerVideo = multer({ dest: "uploads/videos/" });
+const multerAvatar = multer({ dest: "uploads/avatars/" });
 
 export const localsMiddleware = (req, res, next) => {
   res.locals.siteName = "WeTube";
   res.locals.routes = routes;
   res.locals.loggedUser = req.user || null; // passport가 user object를 req에 넣어줌
-  console.log(req.user);
   next();
 };
 
@@ -29,3 +29,4 @@ export const onlyPrivate = (req, res, next) => {
 };
 
 export const uploadVideo = multerVideo.single("videoFile");
+export const uploadAvatar = multerAvatar.single("avatar");
