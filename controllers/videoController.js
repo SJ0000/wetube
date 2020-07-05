@@ -1,6 +1,6 @@
 import routes from "../routes";
 import Video from "../models/Video";
-import { readSync } from "fs";
+import Comment from "../models/Comment";
 //render 함수의 두번째 인자는 templete에 추가할 정보가 담긴 객체
 export const home = async (req, res) => {
   try {
@@ -57,7 +57,9 @@ export const videoDetail = async (req, res) => {
     // populate : 객체를 데려오는 함수 (objectId 타입에만 사용 가능하다)
     // findById(id)는 creator의 objectID만 보여주는 반면
     // findById(id).populate("creator")는 creator객체의 정보까지 가져옴
-    const video = await Video.findById(id).populate("creator");
+    const video = await Video.findById(id)
+      .populate("creator")
+      .populate("comments");
     console.log(video);
     res.render("videoDetail", { pageTitle: video.title, video });
   } catch (error) {
@@ -111,4 +113,44 @@ export const deleteVideo = async (req, res) => {
     }
   } catch (error) {}
   res.redirect(routes.home);
+};
+
+//Register Video View
+export const postRegisterView = async (req, res) => {
+  //video의 view를 1 증가
+  const {
+    params: { id },
+  } = req;
+  try {
+    const video = await Video.findById(id);
+    video.views += 1;
+    video.save();
+    res.status(200);
+  } catch (error) {
+    res.status(400);
+  } finally {
+    res.end();
+  }
+};
+
+// Add Comment
+export const postAddComment = async (req, res) => {
+  const {
+    params: { id },
+    body: { comment },
+    user,
+  } = req;
+  try {
+    const video = await Video.findById(id);
+    const newComment = await Comment.create({
+      text: comment,
+      creator: user.id,
+    });
+    video.comments.push(newComment.id);
+    video.save();
+  } catch (error) {
+    res.status(400);
+  } finally {
+    res.end();
+  }
 };

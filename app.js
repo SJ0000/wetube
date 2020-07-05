@@ -9,6 +9,7 @@ import routes from "./routes";
 import morgan from "morgan"; // Logger
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
+import apiRouter from "./routers/apiRouter";
 import { localsMiddleware } from "./middlewares";
 import MongoStore from "connect-mongo"; // cookie를 mongodb에 저장
 import mongoose from "mongoose";
@@ -49,6 +50,7 @@ app.use(localsMiddleware); // View (.pug) 에서 Controller 의 변수를 사용
 app.use(routes.home, globalRouter);
 app.use(routes.users, userRouter); // /user에 접속하면 userRouter를 사용하겠다는 뜻
 app.use(routes.videos, videoRouter);
+app.use(routes.api, apiRouter);
 
 //누군가 app.js를 불러올때 app 객체를 주겠다는 뜻
 export default app;
