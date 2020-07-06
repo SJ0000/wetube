@@ -45,7 +45,6 @@ export const postUpload = async (req, res) => {
   });
   req.user.videos.push(newVideo.id);
   req.user.save();
-  console.log(newVideo);
   res.redirect(routes.videoDetail(newVideo.id));
 };
 
@@ -60,7 +59,6 @@ export const videoDetail = async (req, res) => {
     const video = await Video.findById(id)
       .populate("creator")
       .populate("comments");
-    console.log(video);
     res.render("videoDetail", { pageTitle: video.title, video });
   } catch (error) {
     console.log(error);
@@ -74,8 +72,6 @@ export const getEditVideo = async (req, res) => {
   } = req;
   try {
     const video = await Video.findById(id);
-    console.log(video.creator, req.user.id, video.creator === req.user.id);
-    console.log(typeof video.creator, typeof req.user.id); // object string
     // type이 달라서 !== 로 비교하면 true 반환함
     if (video.creator != req.user.id) {
       throw Error();
@@ -148,6 +144,22 @@ export const postAddComment = async (req, res) => {
     });
     video.comments.push(newComment.id);
     video.save();
+  } catch (error) {
+    res.status(400);
+  } finally {
+    res.end();
+  }
+};
+
+// Delete Comment
+export const postDeleteComment = async (req, res) => {
+  // Todo : Comment id 가져오기
+  const {
+    body: { commentId },
+  } = req;
+  try {
+    const comment = await Comment.findByIdAndDelete(commentId);
+    comment.save();
   } catch (error) {
     res.status(400);
   } finally {

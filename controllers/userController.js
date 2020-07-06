@@ -39,7 +39,6 @@ export const githubLoginCallback = async (_, __, profile, cb) => {
   const {
     _json: { id, avatar_url: avatarUrl, name, email },
   } = profile;
-  console.log(profile._json);
   try {
     const user = await User.findOne({ email });
     if (user) {
@@ -54,7 +53,6 @@ export const githubLoginCallback = async (_, __, profile, cb) => {
       githubId: id,
       avatarUrl,
     });
-    console.log(newUser);
     return cb(null, newUser);
   } catch (error) {
     return cb(error);
